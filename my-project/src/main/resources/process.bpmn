@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0fr9mxs" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:process id="my-project-process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="username" type="string" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_1fp17al</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1fp17al" sourceRef="StartEvent_1" targetRef="registration" />
+    <bpmn:endEvent id="EndEvent_0x6ir2l" name="Новый пользователь создан">
+      <bpmn:incoming>Flow_02lnjx9</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_16gzt2m" sourceRef="registration" targetRef="Gateway_1dd1tl8" />
+    <bpmn:userTask id="registration" name="Подтвердить регистрацию или отклонить" camunda:candidateUsers="admin">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="username" type="string">
+            <camunda:validation>
+              <camunda:constraint name="readonly" config="1" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="decision" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_1fp17al</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_16gzt2m</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1dd1tl8">
+      <bpmn:incoming>SequenceFlow_16gzt2m</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m5x82b</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0rsy2zu</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1m5x82b" sourceRef="Gateway_1dd1tl8" targetRef="Activity_09p99l6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_02lnjx9" sourceRef="Activity_09p99l6" targetRef="EndEvent_0x6ir2l" />
+    <bpmn:sequenceFlow id="Flow_0rsy2zu" sourceRef="Gateway_1dd1tl8" targetRef="Activity_08h0m54">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${decision == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_09cqu9n" name="Новый пользователь не создан">
+      <bpmn:incoming>Flow_0d5ogk8</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0d5ogk8" sourceRef="Activity_08h0m54" targetRef="Event_09cqu9n" />
+    <bpmn:serviceTask id="Activity_09p99l6" name="Создать нового пользователя" camunda:delegateExpression="${denyUser}">
+      <bpmn:incoming>Flow_1m5x82b</bpmn:incoming>
+      <bpmn:outgoing>Flow_02lnjx9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_08h0m54" name="Отправить уведомление об отклонении регистрации" camunda:delegateExpression="${createUser}">
+      <bpmn:incoming>Flow_0rsy2zu</bpmn:incoming>
+      <bpmn:outgoing>Flow_0d5ogk8</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="my-project-process">
+      <bpmndi:BPMNEdge id="Flow_0d5ogk8_di" bpmnElement="Flow_0d5ogk8">
+        <di:waypoint x="680" y="120" />
+        <di:waypoint x="802" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rsy2zu_di" bpmnElement="Flow_0rsy2zu">
+        <di:waypoint x="400" y="212" />
+        <di:waypoint x="400" y="120" />
+        <di:waypoint x="580" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02lnjx9_di" bpmnElement="Flow_02lnjx9">
+        <di:waypoint x="680" y="237" />
+        <di:waypoint x="802" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m5x82b_di" bpmnElement="Flow_1m5x82b">
+        <di:waypoint x="425" y="237" />
+        <di:waypoint x="580" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_16gzt2m_di" bpmnElement="SequenceFlow_16gzt2m">
+        <di:waypoint x="320" y="237" />
+        <di:waypoint x="375" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1fp17al_di" bpmnElement="SequenceFlow_1fp17al">
+        <di:waypoint x="188" y="237" />
+        <di:waypoint x="220" y="237" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="219" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0x6ir2l_di" bpmnElement="EndEvent_0x6ir2l">
+        <dc:Bounds x="802" y="219" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="785" y="262" width="70" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_08mft2c_di" bpmnElement="registration">
+        <dc:Bounds x="220" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1dd1tl8_di" bpmnElement="Gateway_1dd1tl8" isMarkerVisible="true">
+        <dc:Bounds x="375" y="212" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09cqu9n_di" bpmnElement="Event_09cqu9n">
+        <dc:Bounds x="802" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="778" y="145" width="85" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0193ndq_di" bpmnElement="Activity_09p99l6">
+        <dc:Bounds x="580" y="197" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nfn1k3_di" bpmnElement="Activity_08h0m54">
+        <dc:Bounds x="580" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
